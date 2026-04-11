@@ -16,7 +16,7 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   ({ children, variant, className = "" }, ref) => (
     <span
       ref={ref}
-      className={`flex items-center justify-center min-w-7 h-5.5 px-2 pt-[1px] rounded-full text-xs font-medium ${variantClasses[variant]} ${className}`}
+      className={`flex items-center justify-center min-w-7 h-5.5 px-2 rounded-full text-xs font-medium ${variantClasses[variant]} ${className}`}
     >
       {children}
     </span>
