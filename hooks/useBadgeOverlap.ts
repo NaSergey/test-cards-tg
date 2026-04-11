@@ -35,8 +35,13 @@ export function useBadgeOverlap(text: string, enabled = true) {
     };
 
     measure();
+
     const observer = new ResizeObserver(measure);
     observer.observe(el);
+    if (badgeRef.current) {
+      observer.observe(badgeRef.current);
+    }
+
     return () => observer.disconnect();
   }, [text, enabled]);
 
