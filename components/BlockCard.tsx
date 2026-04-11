@@ -62,7 +62,7 @@ export default function BlockCard({ text, count, imageSrc }: BlockCardProps) {
         <p
           ref={textRef}
           className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
-          style={{ paddingBottom: extraBottomPad }}
+          style={{ paddingBottom: count !== undefined ? extraBottomPad : 0 }}
         >
           {text}<span ref={endRef} />
         </p>

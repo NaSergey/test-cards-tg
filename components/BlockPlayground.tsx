@@ -53,6 +53,7 @@ export default function BlockPlayground() {
           placeholder="Введите текст..."
           className="w-86.25 px-4 py-3 rounded-2xl bg-white border border-gray-100 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] text-[15px] text-gray-800 outline-none placeholder:text-gray-300"
         />
+        <BlockCard text={inputText} />
         <ImageBlock
           imageSrc="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80"
           text={inputText}
@@ -60,7 +61,6 @@ export default function BlockPlayground() {
           count={42}
         />
         <BlockCard text={inputText} count={42} />
-        <BlockCard text={inputText} />
       </div>
 
       {/* Right — blocks in two columns */}
