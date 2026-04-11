@@ -31,7 +31,7 @@ export default function ImageBlock({ text, imageSrc, textPosition, count }: Imag
     <div className={`bg-white px-4 py-3 pr-4 ${textRounded}`}>
       <p
         ref={textRef}
-        className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word"
+        className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
         style={{ paddingBottom: !badgeOnImage && hasCount ? extraBottomPad : 0 }}
       >
         {text}<span ref={endRef} />
@@ -61,11 +61,13 @@ export default function ImageBlock({ text, imageSrc, textPosition, count }: Imag
         <button className={`transition-colors leading-none ${!badgeOnImage ? "flex items-center justify-center w-7 h-6.5 rounded-xl backdrop-blur-[4.4px] bg-[#858585]/30" : ""}`}>
           <ThreeDots white={!badgeOnImage} />
         </button>
-        {hasCount && (
-          badgeOnImage
-            ? <Badge ref={badgeRef} variant="blur">{count}</Badge>
-            : <Badge ref={badgeRef} variant="border">{count}</Badge>
-        )}
+        <Badge
+          ref={badgeRef}
+          variant={badgeOnImage ? "blur" : "border"}
+          className={!hasCount ? "invisible" : ""}
+        >
+          {count}
+        </Badge>
       </div>
 
     </div>

@@ -60,6 +60,7 @@ export default function BlockPlayground() {
           count={42}
         />
         <BlockCard text={inputText} count={42} />
+        <BlockCard text={inputText} />
       </div>
 
       {/* Right — blocks in two columns */}

@@ -8,7 +8,7 @@ import { useBadgeOverlap } from "../hooks/useBadgeOverlap";
 
 interface BlockCardProps {
   text: string;
-  count: number;
+  count?: number;
   imageSrc?: string;
 }
 
@@ -61,19 +61,21 @@ export default function BlockCard({ text, count, imageSrc }: BlockCardProps) {
       <div className="flex-1 min-w-0">
         <p
           ref={textRef}
-          className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word"
+          className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
           style={{ paddingBottom: extraBottomPad }}
         >
           {text}<span ref={endRef} />
         </p>
       </div>
 
-      <div className="absolute py-2.5 inset-y-0 right-3.5 flex flex-col justify-between items-center">
-        <button className="transition-colors leading-none">
-          <ThreeDots />
-        </button>
-        <Badge ref={badgeRef} variant="border">{count}</Badge>
-      </div>
+        <div className="absolute py-2.5 inset-y-0 right-3.5 flex flex-col justify-between items-center">
+          <button className="transition-colors leading-none">
+            <ThreeDots />
+          </button>
+          <Badge ref={badgeRef} variant="border" className={count === undefined ? "invisible" : ""}>
+            {count}
+          </Badge>
+        </div>
     </div>
   );
 }
