@@ -40,7 +40,8 @@ export default function BlockPlayground() {
   const [inputText, setInputText] = useState("Hello world!");
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8 gap-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center overflow-x-auto py-4 sm:py-8">
+      <div className="flex justify-center min-w-fit px-4 sm:px-8">
       <RevealWhenLoaded className="flex gap-3 items-start">
 
       {/* Left — input + two preview cards */}
@@ -95,7 +96,7 @@ export default function BlockPlayground() {
           />
         </div>
       </RevealWhenLoaded>
-
+      </div>
     </div>
   );
 }
