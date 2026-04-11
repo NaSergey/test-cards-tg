@@ -36,31 +36,59 @@ const blocks = [
 const left = blocks.filter((_, i) => i % 2 === 0);
 const right = blocks.filter((_, i) => i % 2 === 1);
 
+function parseCountInput(raw: string): { count: number | undefined; active: boolean } {
+  const s = raw.trim();
+  if (s.startsWith("+")) {
+    const n = parseInt(s.slice(1), 10);
+    if (!isNaN(n) && n >= 1 && n <= 999) return { count: n, active: true };
+    return { count: undefined, active: false };
+  }
+  const n = parseInt(s, 10);
+  if (isNaN(n) || n < 0) return { count: undefined, active: false };
+  if (n === 0) return { count: 0, active: false };
+  if (n <= 9999) return { count: n, active: false };
+  return { count: 9999, active: false };
+}
+
+const inputClass =
+  "w-86.25 px-4 py-3 rounded-2xl bg-white border border-gray-100 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] text-[15px] text-gray-800 outline-none placeholder:text-gray-300";
+
 export default function BlockPlayground() {
   const [inputText, setInputText] = useState("Hello world!");
+  const [countInput, setCountInput] = useState("42");
+
+  const { count, active: countActive } = parseCountInput(countInput);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center overflow-x-auto py-4 sm:py-8">
       <div className="flex justify-center min-w-fit px-4 sm:px-8">
       <RevealWhenLoaded className="flex gap-3 items-start">
 
-      {/* Left — input + two preview cards */}
+      {/* Left — inputs + preview cards */}
       <div className="flex flex-col gap-3">
         <input
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           placeholder="Введите текст..."
-          className="w-86.25 px-4 py-3 rounded-2xl bg-white border border-gray-100 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] text-[15px] text-gray-800 outline-none placeholder:text-gray-300"
+          className={inputClass}
+        />
+        <input
+          type="text"
+          value={countInput}
+          onChange={(e) => setCountInput(e.target.value)}
+          placeholder="0 / 42 / +5"
+          className={inputClass}
         />
         <BlockCard text={inputText} />
         <ImageBlock
           imageSrc="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80"
           text={inputText}
           textPosition="bottom"
-          count={42}
+          count={count}
+          countActive={countActive}
         />
-        <BlockCard text={inputText} count={42} />
+        <BlockCard text={inputText} count={count} countActive={countActive} />
       </div>
 
       {/* Right — blocks in two columns */}
