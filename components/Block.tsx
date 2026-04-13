@@ -80,12 +80,12 @@ export default function Block({
     : `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl border ${borderClass} overflow-hidden`;
 
   const dotsClass = isText
-    ? "absolute top-3 right-4 "
+    ? "absolute top-3 right-4"
     : isHorizontal
-    ? "absolute top-3 right-4  transition-colors"
+    ? "absolute top-3 right-4 transition-colors"
     : isVertTop
-    ? "absolute top-3 right-4  transition-colors flex items-center justify-center w-7 h-6.5 rounded-xl backdrop-blur-[4.4px] bg-[#858585]/30"
-    : "absolute top-3 right-4  transition-colors";
+    ? "absolute top-3 right-4 transition-colors flex items-center justify-center w-7 h-6.5 rounded-xl backdrop-blur-[4.4px] bg-[#858585]/30"
+    : "absolute top-3 right-4 transition-colors";
 
   const textSectionRounded = isVertBottom
     ? "rounded-tl-[24px] rounded-tr-[24px]"
@@ -306,7 +306,7 @@ export default function Block({
           <Badge
             ref={badgeRef}
             variant={badgeVariant}
-            className={`absolute bottom-2.5 right-3.5 ${!badgeVisible ? "invisible" : ""}`}
+            className={`absolute bottom-2.5 right-2.5 ${!badgeVisible ? "invisible" : ""}`}
           >
             {badgeLabel}
           </Badge>
