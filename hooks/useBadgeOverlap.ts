@@ -5,7 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-export function useBadgeOverlap(text: string, enabled = true) {
+export function useBadgeOverlap(_text: string, enabled = true) {
   const textRef = useRef<HTMLParagraphElement>(null);
   const endRef = useRef<HTMLSpanElement>(null);
   const badgeRef = useRef<HTMLSpanElement>(null);
@@ -21,6 +21,15 @@ export function useBadgeOverlap(text: string, enabled = true) {
       const style = getComputedStyle(el);
       const lineHeight = parseFloat(style.lineHeight);
       const paddingBottom = parseFloat(style.paddingBottom) || 0;
+
+      // Защита от NaN
+      if (isNaN(lineHeight) || lineHeight <= 0) {
+        setIsMultiLine(false);
+        setIsManyLines(false);
+        setExtraBottomPad(0);
+        return;
+      }
+
       const lines = Math.round((el.offsetHeight - paddingBottom) / lineHeight);
       setIsMultiLine(lines >= 2);
       setIsManyLines(lines >= 3);
@@ -28,7 +37,8 @@ export function useBadgeOverlap(text: string, enabled = true) {
       if (enabled && endRef.current && badgeRef.current) {
         const endRect = endRef.current.getBoundingClientRect();
         const badgeRect = badgeRef.current.getBoundingClientRect();
-        setExtraBottomPad(endRect.left > badgeRect.left ? lineHeight : 0);
+        const pad = endRect.left > badgeRect.left ? lineHeight : 0;
+        setExtraBottomPad(isNaN(pad) ? 0 : pad);
       } else {
         setExtraBottomPad(0);
       }
@@ -43,7 +53,7 @@ export function useBadgeOverlap(text: string, enabled = true) {
     }
 
     return () => observer.disconnect();
-  }, [text, enabled]);
+  }, [enabled]);
 
   return { textRef, endRef, badgeRef, extraBottomPad, isMultiLine, isManyLines };
 }

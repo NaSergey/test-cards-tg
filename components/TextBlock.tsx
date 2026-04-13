@@ -1,4 +1,4 @@
-import ThreeDots from "./ThreeDots";
+import ThreeDots from "./icon/ThreeDots";
 
 interface TextBlockProps {
   text: string;

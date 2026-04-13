@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import ThreeDots from "./ThreeDots";
+import ThreeDots from "./icon/ThreeDots";
 import Badge from "./Badge";
 import { useBadgeOverlap } from "../hooks/useBadgeOverlap";
 

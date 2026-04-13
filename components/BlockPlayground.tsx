@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
-import ImageBlock from "./ImageBlock";
-import BlockCard from "./BlockCard";
+import Block from "./Block";
 import RevealWhenLoaded from "./RevealWhenLoaded";
+import LayoutSelector, { LayoutType } from "./LayoutSelector";
 
 const blocks = [
   {
@@ -53,9 +53,12 @@ function parseCountInput(raw: string): { count: number | undefined; active: bool
 const inputClass =
   "w-86.25 px-4 py-3 rounded-2xl bg-white border border-gray-100 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] text-[15px] text-gray-800 outline-none placeholder:text-gray-300";
 
+const PREVIEW_IMAGE = "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80";
+
 export default function BlockPlayground() {
   const [inputText, setInputText] = useState("Hello world!");
   const [countInput, setCountInput] = useState("42");
+  const [layout, setLayout] = useState<LayoutType>("text");
 
   const { count, active: countActive } = parseCountInput(countInput);
 
@@ -80,47 +83,51 @@ export default function BlockPlayground() {
           placeholder="0 / 42 / +5"
           className={inputClass}
         />
-        <BlockCard text={inputText} />
-        <ImageBlock
-          imageSrc="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80"
+        <LayoutSelector value={layout} onChange={setLayout} />
+        <Block
+          key="preview"
+          layout={layout}
           text={inputText}
-          textPosition="bottom"
+          imageSrc={PREVIEW_IMAGE}
           count={count}
           countActive={countActive}
         />
-        <BlockCard text={inputText} count={count} countActive={countActive} />
       </div>
 
       {/* Right — blocks in two columns */}
         <div className="flex flex-col gap-3">
           {left.map((block) => (
-            <BlockCard
+            <Block
               key={block.id}
+              layout={block.imageSrc ? "horizontal" : "text"}
               text={block.text}
               count={block.count}
               imageSrc={block.imageSrc}
             />
           ))}
-          <ImageBlock
+          <Block
+            key="static-1"
+            layout="vertical-bottom"
             imageSrc="/bg.png"
             text="Hello world!"
-            textPosition="top"
             count={10}
           />
         </div>
         <div className="flex flex-col gap-3">
           {right.map((block) => (
-            <BlockCard
+            <Block
               key={block.id}
+              layout={block.imageSrc ? "horizontal" : "text"}
               text={block.text}
               count={block.count}
               imageSrc={block.imageSrc}
             />
           ))}
-          <ImageBlock
+          <Block
+            key="static-2"
+            layout="vertical-top"
             imageSrc="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80"
             text="Drinking water isn't just about quenching aaa bbbb"
-            textPosition="bottom"
             count={42}
           />
         </div>
