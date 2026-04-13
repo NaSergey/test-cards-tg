@@ -5,7 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-export function useBadgeOverlap(_text: string, enabled = true) {
+export function useBadgeOverlap(_text: string, enabled = true, layoutKey?: string) {
   const textRef = useRef<HTMLParagraphElement>(null);
   const endRef = useRef<HTMLSpanElement>(null);
   const badgeRef = useRef<HTMLSpanElement>(null);
@@ -60,7 +60,7 @@ export function useBadgeOverlap(_text: string, enabled = true) {
       clearTimeout(timerId);
       observer.disconnect();
     };
-  }, [enabled]);
+  }, [enabled, layoutKey]);
 
   return { textRef, endRef, badgeRef, extraBottomPad, isMultiLine, isManyLines };
 }

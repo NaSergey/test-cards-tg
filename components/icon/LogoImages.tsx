@@ -7,19 +7,19 @@ export default function LogoImages() {
       <path d="M105.642 52.6525C105.984 52.6525 106.272 52.9399 106.272 53.2823V60.3722H113.361C113.704 60.3722 113.991 60.6588 113.991 61.0011C113.991 61.3435 113.704 61.6309 113.361 61.631H106.272V68.7208C106.272 69.0633 105.984 69.3507 105.642 69.3507C105.299 69.3505 105.013 69.0632 105.013 68.7208V61.631H97.9229C97.5804 61.631 97.293 61.3436 97.293 61.0011C97.2932 60.6588 97.5805 60.3722 97.9229 60.3722H105.013V53.2823C105.013 52.94 105.299 52.6526 105.642 52.6525Z" fill="white" stroke="#F1F6FD"/>
       <defs>
         <linearGradient id="paint0_linear_1679_146" x1="181.152" y1="-5.2396" x2="101.603" y2="137.396" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#2BD1FF"/>
-          <stop offset="0.509615" stop-color="#34B8FF"/>
-          <stop offset="1" stop-color="#229CFD"/>
+          <stop stopColor="#2BD1FF"/>
+          <stop offset="0.509615" stopColor="#34B8FF"/>
+          <stop offset="1" stopColor="#229CFD"/>
         </linearGradient>
         <linearGradient id="paint1_linear_1679_146" x1="54.732" y1="-7.5588" x2="16.938" y2="24.0507" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#2BD1FF"/>
-          <stop offset="0.509615" stop-color="#34B8FF"/>
-          <stop offset="1" stop-color="#229CFD"/>
+          <stop stopColor="#2BD1FF"/>
+          <stop offset="0.509615" stopColor="#34B8FF"/>
+          <stop offset="1" stopColor="#229CFD"/>
         </linearGradient>
         <linearGradient id="paint2_linear_1679_146" x1="142.055" y1="33.4107" x2="84.7914" y2="81.3039" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#2BD1FF"/>
-          <stop offset="0.509615" stop-color="#34B8FF"/>
-          <stop offset="1" stop-color="#229CFD"/>
+          <stop stopColor="#2BD1FF"/>
+          <stop offset="0.509615" stopColor="#34B8FF"/>
+          <stop offset="1" stopColor="#229CFD"/>
         </linearGradient>
       </defs>
     </svg>

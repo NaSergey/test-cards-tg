@@ -37,7 +37,7 @@ const AutoExpandTextarea = forwardRef<
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={1}
-        className={`resize-none focus:outline-none overflow-hidden ${className}`}
+        className={`resize-none block  focus:outline-none overflow-hidden ${className}`}
       />
     );
   }

@@ -54,12 +54,12 @@ const inputClass =
 const PREVIEW_IMAGE = "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80";
 
 export default function BlockPlayground() {
-  const [inputText, setInputText] = useState("Hello world!");
+  const [inputText, setInputText] = useLocalStorage<string>("preview-text", "Hello world!");
   const [countInput, setCountInput] = useState("42");
-  const [layout, setLayout] = useState<LayoutType>("text");
+  const [layout, setLayout] = useLocalStorage<LayoutType>("preview-layout", "text");
 
   // Загрузка/сохранение текстов блоков из localStorage
-  const [blocksData, setBlocksData] = useLocalStorage<Record<number, { text: string }>>(
+  const [blocksData, setBlocksData] = useLocalStorage<Record<number, { text: string; layout?: LayoutType }>>(
     "blocks-data",
     {}
   );
@@ -72,8 +72,8 @@ export default function BlockPlayground() {
   };
 
   // Обработчик сохранения текста блока
-  const handleBlockSave = (blockId: number, newText: string) => {
-    const updated = { ...blocksData, [blockId]: { text: newText } };
+  const handleBlockSave = (blockId: number, newText: string, newLayout: LayoutType) => {
+    const updated = { ...blocksData, [blockId]: { text: newText, layout: newLayout } };
     setBlocksData(updated);
   };
 
@@ -108,6 +108,10 @@ export default function BlockPlayground() {
           imageSrc={PREVIEW_IMAGE}
           count={count}
           countActive={countActive}
+          onSave={(newText, newLayout) => {
+            setInputText(newText);
+            setLayout(newLayout);
+          }}
         />
       </div>
 
@@ -117,11 +121,11 @@ export default function BlockPlayground() {
             <Block
               key={block.id}
               id={block.id}
-              initialLayout={block.imageSrc ? "horizontal" : "text"}
+              initialLayout={blocksData[block.id]?.layout ?? (block.imageSrc ? "horizontal" : "text")}
               text={getBlockText(block.id, block.text)}
               count={block.count}
               imageSrc={block.imageSrc}
-              onSave={(newText) => handleBlockSave(block.id, newText)}
+              onSave={(newText, newLayout) => handleBlockSave(block.id, newText, newLayout)}
             />
           ))}
           <Block
@@ -137,11 +141,11 @@ export default function BlockPlayground() {
             <Block
               key={block.id}
               id={block.id}
-              initialLayout={block.imageSrc ? "horizontal" : "text"}
+              initialLayout={blocksData[block.id]?.layout ?? (block.imageSrc ? "horizontal" : "text")}
               text={getBlockText(block.id, block.text)}
               count={block.count}
               imageSrc={block.imageSrc}
-              onSave={(newText) => handleBlockSave(block.id, newText)}
+              onSave={(newText, newLayout) => handleBlockSave(block.id, newText, newLayout)}
             />
           ))}
           <Block

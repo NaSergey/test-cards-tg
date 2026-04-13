@@ -15,6 +15,7 @@ import LayoutText from "./icon/LayoutText";
 import LayoutHorizontal from "./icon/LayoutHorizontal";
 import LayoutVerticalTop from "./icon/LayoutVerticalTop";
 import LayoutVerticalBottom from "./icon/LayoutVerticalBottom";
+import LogoImages from "./icon/LogoImages";
 
 interface BlockProps {
   text: string;
@@ -23,7 +24,7 @@ interface BlockProps {
   countActive?: boolean;
   initialLayout?: LayoutType;
   id?: string | number;
-  onSave?: (text: string) => void;
+  onSave?: (text: string, layout: LayoutType) => void;
 }
 
 export default function Block({
@@ -32,13 +33,14 @@ export default function Block({
   count,
   countActive = false,
   initialLayout = "text",
-  id,
   onSave,
 }: BlockProps) {
   const [layout, setLayout] = useState<LayoutType>(initialLayout);
+  const [savedLayout, setSavedLayout] = useState<LayoutType>(initialLayout);
   const [menuOpen, setMenuOpen] = useState(false);
   const [editingText, setEditingText] = useState(text);
   const [hasChanges, setHasChanges] = useState(false);
+  const [layoutSelectorOpen, setLayoutSelectorOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // При открытии меню - синхронизируем editingText с актуальным text пропом (из localStorage)
@@ -46,9 +48,10 @@ export default function Block({
     if (menuOpen) {
       // eslint-disable-next-line
       setEditingText(text);
+      setSavedLayout(layout);
       setHasChanges(false);
     }
-  }, [menuOpen, text]);
+  }, [menuOpen, text]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isText       = layout === "text";
   const isHorizontal = layout === "horizontal";
@@ -59,7 +62,7 @@ export default function Block({
   const badgeOnImage = isVertBottom;
 
   const { textRef, endRef, badgeRef, extraBottomPad, isMultiLine, isManyLines } =
-    useBadgeOverlap(menuOpen ? editingText : text, badgeVisible && !badgeOnImage);
+    useBadgeOverlap(menuOpen ? editingText : text, badgeVisible && !badgeOnImage, `${layout}:${menuOpen}`);
 
   const badgeLabel   = countActive ? `+${count}` : String(count ?? "");
   const badgeVariant = badgeOnImage
@@ -77,12 +80,12 @@ export default function Block({
     : `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl border ${borderClass} overflow-hidden`;
 
   const dotsClass = isText
-    ? "absolute top-3 right-4 leading-none"
+    ? "absolute top-3 right-4 "
     : isHorizontal
-    ? "absolute top-3 right-4 leading-none transition-colors"
+    ? "absolute top-3 right-4  transition-colors"
     : isVertTop
-    ? "absolute top-3 right-4 leading-none transition-colors flex items-center justify-center w-7 h-6.5 rounded-xl backdrop-blur-[4.4px] bg-[#858585]/30"
-    : "absolute top-3 right-4 leading-none transition-colors";
+    ? "absolute top-3 right-4  transition-colors flex items-center justify-center w-7 h-6.5 rounded-xl backdrop-blur-[4.4px] bg-[#858585]/30"
+    : "absolute top-3 right-4  transition-colors";
 
   const textSectionRounded = isVertBottom
     ? "rounded-tl-[24px] rounded-tr-[24px]"
@@ -109,18 +112,19 @@ export default function Block({
 
   const handleTextChange = (newText: string) => {
     setEditingText(newText);
-    setHasChanges(newText !== text);
+    setHasChanges(newText !== text || layout !== savedLayout);
   };
 
   const handleCancel = () => {
     setEditingText(text);
+    setLayout(savedLayout);
     setHasChanges(false);
     setMenuOpen(false);
   };
 
   const handleSave = () => {
     if (editingText.trim() && hasChanges) {
-      onSave?.(editingText);
+      onSave?.(editingText, layout);
       setHasChanges(false);
       setMenuOpen(false);
     }
@@ -130,7 +134,7 @@ export default function Block({
     <div className="relative flex flex-col items-center gap-2">
       {/* Layout Selector - выше всех блоков */}
       <AnimatePresence mode="wait">
-        {menuOpen && (
+        {menuOpen && layoutSelectorOpen && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -138,7 +142,11 @@ export default function Block({
             transition={{ duration: 0.3 }}
             className="absolute z-50 -top-10 left-1/2 -translate-x-1/2"
           >
-            <LayoutSelector value={layout} onChange={setLayout} />
+            <LayoutSelector value={layout} onChange={(newLayout) => {
+              setLayout(newLayout);
+              setHasChanges(newLayout !== savedLayout || editingText !== text);
+              setLayoutSelectorOpen(false);
+            }} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -159,9 +167,12 @@ export default function Block({
                 <CloseIcon />
               </button>
               <div className="flex items-center gap-4">
-                <div className="w-6 h-6 p-1 border border-gray-300 rounded flex items-center justify-center">
+                <button
+                  onClick={() => setLayoutSelectorOpen(!layoutSelectorOpen)}
+                  className="w-6 h-6 p-1 border border-gray-300 rounded flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors"
+                >
                   {getLayoutIcon()}
-                </div>
+                </button>
                 <button
                   onClick={handleSave}
                   disabled={!editingText.trim()}
@@ -176,7 +187,7 @@ export default function Block({
         </AnimatePresence>
       </div>
 
-      <motion.div ref={wrapperRef} className={`${wrapperClass} relative z-10`} animate={{ marginTop: menuOpen ? '58px' : '0px' }} transition={{ duration: 0.3 }} layout>
+      <motion.div ref={wrapperRef} className={`${wrapperClass} relative z-10`} layout animate={{ marginTop: menuOpen ? '58px' : '0px' }} transition={{ duration: 0.3 }}>
 
         {/* vertical-bottom: text section on top */}
         {isVertBottom && (
@@ -206,10 +217,26 @@ export default function Block({
           </div>
         )}
 
+        {/* horizontal: image placeholder */}
+        {isHorizontal && !imageSrc && (
+          <div className={`shrink-0 ${isManyLines ? "self-start" : "self-center"}`}>
+            <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#F1F6FD] flex items-center justify-center">
+              <LogoImages />
+            </div>
+          </div>
+        )}
+
         {/* vertical: full-width image */}
         {(isVertTop || isVertBottom) && imageSrc && (
           <div className={`w-full h-48 overflow-hidden ${imageRounded}`}>
             <Image src={imageSrc} alt="" width={400} height={200} className="w-full h-full object-cover" />
+          </div>
+        )}
+
+        {/* vertical: image placeholder */}
+        {(isVertTop || isVertBottom) && !imageSrc && (
+          <div className={`w-full h-48 overflow-hidden ${imageRounded} bg-[#F1F6FD] flex items-center justify-center`}>
+            <LogoImages />
           </div>
         )}
 
@@ -269,11 +296,13 @@ export default function Block({
           </div>
         )}
 
-        <button className={`cursor-pointer ${dotsClass}`} onClick={() => setMenuOpen(!menuOpen)}>
-          <ThreeDots white={isVertTop} />
-        </button>
+        {!menuOpen && (
+          <button className={`cursor-pointer ${dotsClass}`} onClick={() => setMenuOpen(!menuOpen)}>
+            <ThreeDots white={isVertTop} />
+          </button>
+        )}
 
-        {badgeVisible && (
+        {badgeVisible && !menuOpen && (
           <Badge
             ref={badgeRef}
             variant={badgeVariant}
