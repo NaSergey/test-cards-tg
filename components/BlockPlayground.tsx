@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 import Block from "./Block";
 import RevealWhenLoaded from "./RevealWhenLoaded";
@@ -33,9 +34,6 @@ const blocks = [
   },
 ];
 
-const left = blocks.filter((_, i) => i % 2 === 0);
-const right = blocks.filter((_, i) => i % 2 === 1);
-
 function parseCountInput(raw: string): { count: number | undefined; active: boolean } {
   const s = raw.trim();
   if (s.startsWith("+")) {
@@ -60,7 +58,27 @@ export default function BlockPlayground() {
   const [countInput, setCountInput] = useState("42");
   const [layout, setLayout] = useState<LayoutType>("text");
 
+  // Загрузка/сохранение текстов блоков из localStorage
+  const [blocksData, setBlocksData] = useLocalStorage<Record<number, { text: string }>>(
+    "blocks-data",
+    {}
+  );
+
   const { count, active: countActive } = parseCountInput(countInput);
+
+  // Получить текст блока - если сохранён в localStorage, то оттуда, иначе исходный
+  const getBlockText = (blockId: number, defaultText: string) => {
+    return blocksData[blockId]?.text ?? defaultText;
+  };
+
+  // Обработчик сохранения текста блока
+  const handleBlockSave = (blockId: number, newText: string) => {
+    const updated = { ...blocksData, [blockId]: { text: newText } };
+    setBlocksData(updated);
+  };
+
+  const left = blocks.filter((_, i) => i % 2 === 0);
+  const right = blocks.filter((_, i) => i % 2 === 1);
 
   return (
     <div className="min-h-screen bg-gray-400 flex flex-col justify-center overflow-x-auto py-4 sm:py-8">
@@ -83,7 +101,6 @@ export default function BlockPlayground() {
           placeholder="0 / 42 / +5"
           className={inputClass}
         />
-        <LayoutSelector value={layout} onChange={setLayout} />
         <Block
           key="preview"
           initialLayout={layout}
@@ -99,10 +116,12 @@ export default function BlockPlayground() {
           {left.map((block) => (
             <Block
               key={block.id}
+              id={block.id}
               initialLayout={block.imageSrc ? "horizontal" : "text"}
-              text={block.text}
+              text={getBlockText(block.id, block.text)}
               count={block.count}
               imageSrc={block.imageSrc}
+              onSave={(newText) => handleBlockSave(block.id, newText)}
             />
           ))}
           <Block
@@ -117,10 +136,12 @@ export default function BlockPlayground() {
           {right.map((block) => (
             <Block
               key={block.id}
+              id={block.id}
               initialLayout={block.imageSrc ? "horizontal" : "text"}
-              text={block.text}
+              text={getBlockText(block.id, block.text)}
               count={block.count}
               imageSrc={block.imageSrc}
+              onSave={(newText) => handleBlockSave(block.id, newText)}
             />
           ))}
           <Block

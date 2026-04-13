@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ThreeDots from "./icon/ThreeDots";
 import CloseIcon from "./icon/CloseIcon";
@@ -22,6 +22,8 @@ interface BlockProps {
   count?: number;
   countActive?: boolean;
   initialLayout?: LayoutType;
+  id?: string | number;
+  onSave?: (text: string) => void;
 }
 
 export default function Block({
@@ -30,12 +32,22 @@ export default function Block({
   count,
   countActive = false,
   initialLayout = "text",
+  id,
+  onSave,
 }: BlockProps) {
   const [layout, setLayout] = useState<LayoutType>(initialLayout);
   const [menuOpen, setMenuOpen] = useState(false);
   const [editingText, setEditingText] = useState(text);
   const [hasChanges, setHasChanges] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // При открытии меню - синхронизируем editingText с актуальным text пропом (из localStorage)
+  useEffect(() => {
+    if (menuOpen) {
+      setEditingText(text);
+      setHasChanges(false);
+    }
+  }, [menuOpen]);
 
   const isText       = layout === "text";
   const isHorizontal = layout === "horizontal";
@@ -59,7 +71,7 @@ export default function Block({
     ? `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl border border-gray-100 px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
     : isHorizontal
     ? `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl flex items-center gap-3 px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
-    : "relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] rounded-3xl overflow-hidden";
+    : "relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl overflow-hidden";
 
   const dotsClass = isText
     ? "absolute top-3 right-4 leading-none"
@@ -74,7 +86,7 @@ export default function Block({
     : "rounded-tl-[5px] rounded-tr-[5px] rounded-bl-[24px] rounded-br-[24px]";
 
   const imageRounded = isVertBottom
-    ? " rounded-b-3xl"
+    ? "rounded-tl-[5px] rounded-tr-[5px] rounded-b-3xl"
     : "rounded-t-3xl rounded-bl-[5px] rounded-br-[5px]";
 
   const getLayoutIcon = () => {
@@ -105,6 +117,7 @@ export default function Block({
 
   const handleSave = () => {
     if (editingText.trim() && hasChanges) {
+      onSave?.(editingText);
       setHasChanges(false);
       setMenuOpen(false);
     }
@@ -149,9 +162,9 @@ export default function Block({
                 <button
                   onClick={handleSave}
                   disabled={!editingText.trim()}
-                  className={`cursor-pointer transition-colors ${hasChanges ? "text-[#34B8FF]" : "text-gray-600"} ${!editingText.trim() ? "opacity-50" : ""}`}
+                  className={`cursor-pointer transition-colors ${!editingText.trim() ? "opacity-50" : ""}`}
                 >
-                  <ArrowUp />
+                  <ArrowUp bgColor={hasChanges ? "#068DFB" : "#DCDCDC"} />
                 </button>
               </div>
             </div>
