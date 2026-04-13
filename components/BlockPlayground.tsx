@@ -81,7 +81,7 @@ export default function BlockPlayground() {
   const right = blocks.filter((_, i) => i % 2 === 1);
 
   return (
-    <div className="min-h-screen bg-gray-400 flex flex-col justify-center overflow-x-auto py-4 sm:py-8">
+    <div className="min-h-screen bg-[#FCFCFC] flex flex-col justify-center overflow-x-auto py-4 sm:py-8">
       <div className="flex justify-center min-w-fit px-4 sm:px-8">
       <RevealWhenLoaded className="flex gap-3 items-start">
 

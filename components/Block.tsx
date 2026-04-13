@@ -44,10 +44,11 @@ export default function Block({
   // При открытии меню - синхронизируем editingText с актуальным text пропом (из localStorage)
   useEffect(() => {
     if (menuOpen) {
+      // eslint-disable-next-line
       setEditingText(text);
       setHasChanges(false);
     }
-  }, [menuOpen]);
+  }, [menuOpen, text]);
 
   const isText       = layout === "text";
   const isHorizontal = layout === "horizontal";
@@ -67,11 +68,13 @@ export default function Block({
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  const borderClass = menuOpen ? "border-[#229CFD]" : "border-gray-100";
+
   const wrapperClass = isText
-    ? `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl border border-gray-100 px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
+    ? `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl border ${borderClass} px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
     : isHorizontal
     ? `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl flex items-center gap-3 px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
-    : "relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl overflow-hidden";
+    : `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl border ${borderClass} overflow-hidden`;
 
   const dotsClass = isText
     ? "absolute top-3 right-4 leading-none"
@@ -149,7 +152,7 @@ export default function Block({
               animate={{ height: 100, opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="overflow-hidden h-20 w-86.25 bg-white rounded-t-3xl"
+              className="overflow-hidden h-20 w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)]  bg-white rounded-t-3xl"
             >
             <div className="flex items-center justify-between w-full p-4">
               <button onClick={handleCancel} className="p-2 cursor-pointer">
