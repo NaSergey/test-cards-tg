@@ -27,7 +27,7 @@ export default function LayoutSelector({ value, onChange }: LayoutSelectorProps)
           key={type}
           aria-label={label}
           onClick={() => onChange(type)}
-          className={`flex items-center justify-center rounded-xl p-2.5 transition-colors ${
+          className={`flex cursor-pointer items-center justify-center rounded-xl p-2.5 transition-colors ${
             value === type
               ? "bg-gray-100"
               : "hover:bg-gray-50"

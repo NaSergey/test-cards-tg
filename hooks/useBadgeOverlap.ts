@@ -15,7 +15,9 @@ export function useBadgeOverlap(_text: string, enabled = true) {
 
   useIsomorphicLayoutEffect(() => {
     const el = textRef.current;
-    if (!el) return;
+    if (!el || !enabled) return;
+
+    let timerId: NodeJS.Timeout;
 
     const measure = () => {
       const style = getComputedStyle(el);
@@ -34,25 +36,30 @@ export function useBadgeOverlap(_text: string, enabled = true) {
       setIsMultiLine(lines >= 2);
       setIsManyLines(lines >= 3);
 
-      if (enabled && endRef.current && badgeRef.current) {
+      if (endRef.current && badgeRef.current) {
         const endRect = endRef.current.getBoundingClientRect();
         const badgeRect = badgeRef.current.getBoundingClientRect();
         const pad = endRect.left > badgeRect.left ? lineHeight : 0;
         setExtraBottomPad(isNaN(pad) ? 0 : pad);
-      } else {
-        setExtraBottomPad(0);
       }
     };
 
     measure();
 
-    const observer = new ResizeObserver(measure);
+    // Debounce для ResizeObserver - предотвращает частые обновления
+    const observer = new ResizeObserver(() => {
+      clearTimeout(timerId);
+      timerId = setTimeout(measure, 100);
+    });
     observer.observe(el);
     if (badgeRef.current) {
       observer.observe(badgeRef.current);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      clearTimeout(timerId);
+      observer.disconnect();
+    };
   }, [enabled]);
 
   return { textRef, endRef, badgeRef, extraBottomPad, isMultiLine, isManyLines };

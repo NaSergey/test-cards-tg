@@ -1,28 +1,42 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
-import { motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ThreeDots from "./icon/ThreeDots";
+import CloseIcon from "./icon/CloseIcon";
+import ArrowUp from "./icon/ArrowUp";
 import Badge from "./Badge";
 import { useBadgeOverlap } from "../hooks/useBadgeOverlap";
 import { LayoutType } from "./LayoutSelector";
+import LayoutSelector from "./LayoutSelector";
+import AutoExpandTextarea from "./AutoExpandTextarea";
+import LayoutText from "./icon/LayoutText";
+import LayoutHorizontal from "./icon/LayoutHorizontal";
+import LayoutVerticalTop from "./icon/LayoutVerticalTop";
+import LayoutVerticalBottom from "./icon/LayoutVerticalBottom";
 
 interface BlockProps {
   text: string;
-  layout?: LayoutType;
   imageSrc?: string;
   count?: number;
   countActive?: boolean;
+  initialLayout?: LayoutType;
 }
 
 export default function Block({
   text,
-  layout = "text",
   imageSrc,
   count,
   countActive = false,
+  initialLayout = "text",
 }: BlockProps) {
+  const [layout, setLayout] = useState<LayoutType>(initialLayout);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [editingText, setEditingText] = useState(text);
+  const [hasChanges, setHasChanges] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const isText       = layout === "text";
   const isHorizontal = layout === "horizontal";
   const isVertTop    = layout === "vertical-top";
@@ -32,7 +46,7 @@ export default function Block({
   const badgeOnImage = isVertBottom;
 
   const { textRef, endRef, badgeRef, extraBottomPad, isMultiLine, isManyLines } =
-    useBadgeOverlap(text, badgeVisible && !badgeOnImage && !isText);
+    useBadgeOverlap(menuOpen ? editingText : text, badgeVisible && !badgeOnImage);
 
   const badgeLabel   = countActive ? `+${count}` : String(count ?? "");
   const badgeVariant = badgeOnImage
@@ -42,7 +56,7 @@ export default function Block({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const wrapperClass = isText
-    ? "relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl border border-gray-100 px-4 py-4 overflow-hidden"
+    ? `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl border border-gray-100 px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
     : isHorizontal
     ? `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl flex items-center gap-3 px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
     : "relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] rounded-3xl overflow-hidden";
@@ -56,81 +70,204 @@ export default function Block({
     : "absolute top-3 right-4 leading-none transition-colors";
 
   const textSectionRounded = isVertBottom
-    ? "rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[5px] rounded-br-[5px]"
+    ? "rounded-tl-[24px] rounded-tr-[24px]"
     : "rounded-tl-[5px] rounded-tr-[5px] rounded-bl-[24px] rounded-br-[24px]";
 
   const imageRounded = isVertBottom
-    ? "rounded-tl-[5px] rounded-tr-[5px] rounded-b-3xl"
+    ? " rounded-b-3xl"
     : "rounded-t-3xl rounded-bl-[5px] rounded-br-[5px]";
 
+  const getLayoutIcon = () => {
+    switch (layout) {
+      case "text":
+        return <LayoutText />;
+      case "horizontal":
+        return <LayoutHorizontal />;
+      case "vertical-top":
+        return <LayoutVerticalTop />;
+      case "vertical-bottom":
+        return <LayoutVerticalBottom />;
+      default:
+        return <LayoutText />;
+    }
+  };
+
+  const handleTextChange = (newText: string) => {
+    setEditingText(newText);
+    setHasChanges(newText !== text);
+  };
+
+  const handleCancel = () => {
+    setEditingText(text);
+    setHasChanges(false);
+    setMenuOpen(false);
+  };
+
+  const handleSave = () => {
+    if (editingText.trim() && hasChanges) {
+      setHasChanges(false);
+      setMenuOpen(false);
+    }
+  };
+
   return (
-    <motion.div ref={wrapperRef} className={wrapperClass} layout>
+    <div className="relative flex flex-col items-center gap-2">
+      {/* Layout Selector - выше всех блоков */}
+      <AnimatePresence mode="wait">
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="absolute z-50 -top-10 left-1/2 -translate-x-1/2"
+          >
+            <LayoutSelector value={layout} onChange={setLayout} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* vertical-bottom: text section on top */}
-      {isVertBottom && (
-        <div className={`bg-white px-4 py-3 ${textSectionRounded}`}>
-          <p ref={textRef} className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
-            style={{ paddingBottom: extraBottomPad }}>
-            {text}<span ref={endRef} />
-          </p>
-        </div>
-      )}
+      {/* Menu Bar - выезжает сверху, позади блока */}
+      <div className="absolute w-full z-0">
+        <AnimatePresence mode="wait">
+          {menuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 100, opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden h-20 w-86.25 bg-white rounded-t-3xl"
+            >
+            <div className="flex items-center justify-between w-full p-4">
+              <button onClick={handleCancel} className="p-2 cursor-pointer">
+                <CloseIcon />
+              </button>
+              <div className="flex items-center gap-4">
+                <div className="w-6 h-6 p-1 border border-gray-300 rounded flex items-center justify-center">
+                  {getLayoutIcon()}
+                </div>
+                <button
+                  onClick={handleSave}
+                  disabled={!editingText.trim()}
+                  className={`cursor-pointer transition-colors ${hasChanges ? "text-[#34B8FF]" : "text-gray-600"} ${!editingText.trim() ? "opacity-50" : ""}`}
+                >
+                  <ArrowUp />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+        </AnimatePresence>
+      </div>
 
-      {/* horizontal: small image on the left */}
-      {isHorizontal && imageSrc && (
-        <div className={`shrink-0 ${isManyLines ? "self-start" : "self-center"}`}>
-          <div className="w-14 h-14 rounded-xl overflow-hidden">
-            <Image src={imageSrc} alt="" width={56} height={56} className="w-full h-full object-cover" />
+      <motion.div ref={wrapperRef} className={`${wrapperClass} relative z-10`} animate={{ marginTop: menuOpen ? '58px' : '0px' }} transition={{ duration: 0.3 }} layout>
+
+        {/* vertical-bottom: text section on top */}
+        {isVertBottom && (
+          <div className={`bg-white px-4 py-3 ${textSectionRounded}`}>
+            {menuOpen ? (
+              <AutoExpandTextarea
+                ref={textareaRef}
+                value={editingText}
+                onChange={handleTextChange}
+                className="text-[15px] leading-[1.4] text-gray-800 w-full border-0"
+              />
+            ) : (
+              <p ref={textRef} className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
+                style={{ paddingBottom: extraBottomPad }}>
+                {text}<span ref={endRef} />
+              </p>
+            )}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* vertical: full-width image */}
-      {(isVertTop || isVertBottom) && imageSrc && (
-        <div className={`w-full h-48 overflow-hidden ${imageRounded}`}>
-          <Image src={imageSrc} alt="" width={400} height={200} className="w-full h-full object-cover" />
-        </div>
-      )}
+        {/* horizontal: small image on the left */}
+        {isHorizontal && imageSrc && (
+          <div className={`shrink-0 ${isManyLines ? "self-start" : "self-center"}`}>
+            <div className="w-14 h-14 rounded-xl overflow-hidden">
+              <Image src={imageSrc} alt="" width={56} height={56} className="w-full h-full object-cover" />
+            </div>
+          </div>
+        )}
 
-      {/* text layout: plain paragraph */}
-      {isText && (
-        <p className="text-sm leading-[1.4] text-gray-800 wrap-break-word">{text}</p>
-      )}
+        {/* vertical: full-width image */}
+        {(isVertTop || isVertBottom) && imageSrc && (
+          <div className={`w-full h-48 overflow-hidden ${imageRounded}`}>
+            <Image src={imageSrc} alt="" width={400} height={200} className="w-full h-full object-cover" />
+          </div>
+        )}
 
-      {/* horizontal: text on the right */}
-      {isHorizontal && (
-        <div className="flex-1 min-w-0">
-          <p ref={textRef} className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
-            style={{ paddingBottom: extraBottomPad }}>
-            {text}<span ref={endRef} />
-          </p>
-        </div>
-      )}
+        {/* text layout: plain paragraph */}
+        {isText && (
+          menuOpen ? (
+            <AutoExpandTextarea
+              ref={textareaRef}
+              value={editingText}
+              onChange={handleTextChange}
+              className="text-sm leading-[1.4] text-gray-800 w-full border-0"
+              style={{ paddingBottom: extraBottomPad }}
+            />
+          ) : (
+            <p ref={textRef} className="text-sm leading-[1.4] text-gray-800 wrap-break-word"
+              style={{ paddingBottom: extraBottomPad }}>
+              {text}<span ref={endRef} />
+            </p>
+          )
+        )}
 
-      {/* vertical-top: text section on bottom */}
-      {isVertTop && (
-        <div className={`bg-white px-4 py-3 ${textSectionRounded}`}>
-          <p ref={textRef} className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
-            style={{ paddingBottom: extraBottomPad }}>
-            {text}<span ref={endRef} />
-          </p>
-        </div>
-      )}
+        {/* horizontal: text on the right */}
+        {isHorizontal && (
+          <div className="flex-1 min-w-0">
+            {menuOpen ? (
+              <AutoExpandTextarea
+                ref={textareaRef}
+                value={editingText}
+                onChange={handleTextChange}
+                className="text-[15px] leading-[1.4] text-gray-800 w-full border-0"
+              />
+            ) : (
+              <p ref={textRef} className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
+                style={{ paddingBottom: extraBottomPad }}>
+                {text}<span ref={endRef} />
+              </p>
+            )}
+          </div>
+        )}
 
-      <button className={dotsClass}>
-        <ThreeDots white={isVertTop} />
-      </button>
+        {/* vertical-top: text section on bottom */}
+        {isVertTop && (
+          <div className={`bg-white px-4 py-3 ${textSectionRounded}`}>
+            {menuOpen ? (
+              <AutoExpandTextarea
+                ref={textareaRef}
+                value={editingText}
+                onChange={handleTextChange}
+                className="text-[15px] leading-[1.4] text-gray-800 w-full border-0"
+              />
+            ) : (
+              <p ref={textRef} className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
+                style={{ paddingBottom: extraBottomPad }}>
+                {text}<span ref={endRef} />
+              </p>
+            )}
+          </div>
+        )}
 
-      {!isText && (
-        <Badge
-          ref={badgeRef}
-          variant={badgeVariant}
-          className={`absolute bottom-2.5 right-3.5 ${!badgeVisible ? "invisible" : ""}`}
-        >
-          {badgeVisible ? badgeLabel : null}
-        </Badge>
-      )}
+        <button className={`cursor-pointer ${dotsClass}`} onClick={() => setMenuOpen(!menuOpen)}>
+          <ThreeDots white={isVertTop} />
+        </button>
 
-    </motion.div>
+        {badgeVisible && (
+          <Badge
+            ref={badgeRef}
+            variant={badgeVariant}
+            className={`absolute bottom-2.5 right-3.5 ${!badgeVisible ? "invisible" : ""}`}
+          >
+            {badgeLabel}
+          </Badge>
+        )}
+
+      </motion.div>
+    </div>
   );
 }

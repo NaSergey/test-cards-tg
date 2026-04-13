@@ -63,7 +63,7 @@ export default function BlockPlayground() {
   const { count, active: countActive } = parseCountInput(countInput);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center overflow-x-auto py-4 sm:py-8">
+    <div className="min-h-screen bg-gray-400 flex flex-col justify-center overflow-x-auto py-4 sm:py-8">
       <div className="flex justify-center min-w-fit px-4 sm:px-8">
       <RevealWhenLoaded className="flex gap-3 items-start">
 
@@ -86,7 +86,7 @@ export default function BlockPlayground() {
         <LayoutSelector value={layout} onChange={setLayout} />
         <Block
           key="preview"
-          layout={layout}
+          initialLayout={layout}
           text={inputText}
           imageSrc={PREVIEW_IMAGE}
           count={count}
@@ -99,7 +99,7 @@ export default function BlockPlayground() {
           {left.map((block) => (
             <Block
               key={block.id}
-              layout={block.imageSrc ? "horizontal" : "text"}
+              initialLayout={block.imageSrc ? "horizontal" : "text"}
               text={block.text}
               count={block.count}
               imageSrc={block.imageSrc}
@@ -107,7 +107,7 @@ export default function BlockPlayground() {
           ))}
           <Block
             key="static-1"
-            layout="vertical-bottom"
+            initialLayout="vertical-bottom"
             imageSrc="/bg.png"
             text="Hello world!"
             count={10}
@@ -117,7 +117,7 @@ export default function BlockPlayground() {
           {right.map((block) => (
             <Block
               key={block.id}
-              layout={block.imageSrc ? "horizontal" : "text"}
+              initialLayout={block.imageSrc ? "horizontal" : "text"}
               text={block.text}
               count={block.count}
               imageSrc={block.imageSrc}
@@ -125,7 +125,7 @@ export default function BlockPlayground() {
           ))}
           <Block
             key="static-2"
-            layout="vertical-top"
+            initialLayout="vertical-top"
             imageSrc="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80"
             text="Drinking water isn't just about quenching aaa bbbb"
             count={42}
