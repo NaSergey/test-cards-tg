@@ -15,7 +15,12 @@ export function useBadgeOverlap(_text: string, enabled = true, layoutKey?: strin
 
   useIsomorphicLayoutEffect(() => {
     const el = textRef.current;
-    if (!el || !enabled) return;
+    if (!el || !enabled) {
+      setExtraBottomPad(0);
+      setIsMultiLine(false);
+      setIsManyLines(false);
+      return;
+    }
 
     let timerId: NodeJS.Timeout;
 

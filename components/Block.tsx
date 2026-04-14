@@ -25,6 +25,11 @@ interface BlockProps {
   initialLayout?: LayoutType;
   id?: string | number;
   onSave?: (text: string, layout: LayoutType) => void;
+  isFocused?: boolean;
+  isSelected?: boolean;
+  onFocus?: () => void;
+  onSelectToggle?: () => void;
+  onEditChange?: (editing: boolean) => void;
 }
 
 export default function Block({
@@ -34,6 +39,11 @@ export default function Block({
   countActive = false,
   initialLayout = "text",
   onSave,
+  isFocused = false,
+  isSelected = false,
+  onFocus,
+  onSelectToggle,
+  onEditChange,
 }: BlockProps) {
   const [layout, setLayout] = useState<LayoutType>(initialLayout);
   const [savedLayout, setSavedLayout] = useState<LayoutType>(initialLayout);
@@ -42,6 +52,10 @@ export default function Block({
   const [hasChanges, setHasChanges] = useState(false);
   const [layoutSelectorOpen, setLayoutSelectorOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    onEditChange?.(menuOpen);
+  }, [menuOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // При открытии меню - синхронизируем editingText с актуальным text пропом (из localStorage)
   useEffect(() => {
@@ -71,21 +85,29 @@ export default function Block({
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const borderClass = menuOpen ? "border-[#229CFD]" : "border-gray-100";
+  const borderClass = (menuOpen || isSelected || (isFocused && !menuOpen)) ? "border-[#229CFD]" : "border-gray-100";
 
-  const wrapperClass = isText
-    ? `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl border ${borderClass} px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
+  const shadowClass = !menuOpen && isSelected
+    ? "shadow-[0px_1px_8px_0px_#149DFF36]"
+    : "shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)]";
+
+  const baseWrapperClass = isText
+    ? `relative w-86.25 ${shadowClass} bg-white rounded-3xl border ${borderClass} px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
     : isHorizontal
-    ? `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl flex items-center gap-3 px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
-    : `relative w-86.25 shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] bg-white rounded-3xl border ${borderClass} overflow-hidden`;
+    ? `relative w-86.25 ${shadowClass} bg-white rounded-3xl border ${borderClass} flex items-center gap-3 px-4 ${isMultiLine ? "py-4" : "py-6"} overflow-hidden`
+    : `relative w-86.25 ${shadowClass} bg-white rounded-3xl border ${borderClass} overflow-hidden`;
+
+  const wrapperClass = baseWrapperClass;
+
+  const bgColor = !menuOpen && isSelected ? "#F1F6FD" : "white";
 
   const dotsClass = isText
-    ? "absolute top-3 right-4"
+    ? "absolute top-0 right-4"
     : isHorizontal
-    ? "absolute top-3 right-4 transition-colors"
+    ? "absolute top-0 right-4 transition-colors"
     : isVertTop
-    ? "absolute top-3 right-4 transition-colors flex items-center justify-center w-7 h-6.5 rounded-xl backdrop-blur-[4.4px] bg-[#858585]/30"
-    : "absolute top-3 right-4 transition-colors";
+    ? "absolute top-0 mt-3 right-4 transition-colors flex items-center justify-center w-7 h-6.5 rounded-xl backdrop-blur-[4.4px] bg-[#858585]/30"
+    : "absolute top-0 right-4 transition-colors";
 
   const textSectionRounded = isVertBottom
     ? "rounded-tl-[24px] rounded-tr-[24px]"
@@ -152,7 +174,8 @@ export default function Block({
       </AnimatePresence>
 
       {/* Menu Bar - выезжает сверху, позади блока */}
-      <div className="absolute w-full z-0">
+      <div className="absolute w-full z-0 pointer-events-none">
+        <div className="pointer-events-auto">
         <AnimatePresence mode="wait">
           {menuOpen && (
             <motion.div
@@ -185,13 +208,23 @@ export default function Block({
           </motion.div>
         )}
         </AnimatePresence>
+        </div>
       </div>
 
-      <motion.div ref={wrapperRef} className={`${wrapperClass} relative z-10`} layout animate={{ marginTop: menuOpen ? '58px' : '0px' }} transition={{ duration: 0.3 }}>
+      <motion.div
+        ref={wrapperRef}
+        className={`${wrapperClass} relative z-10 cursor-pointer`}
+        style={{ backgroundColor: bgColor }}
+        layout
+        animate={{ marginTop: menuOpen ? '58px' : '0px' }}
+        transition={{ duration: 0.3 }}
+        onClick={() => onSelectToggle?.()}
+        onMouseEnter={() => onFocus?.()}
+      >
 
         {/* vertical-bottom: text section on top */}
         {isVertBottom && (
-          <div className={`bg-white px-4 py-3 ${textSectionRounded}`}>
+          <div className={`bg-white px-4 py-4 ${textSectionRounded}`}>
             {menuOpen ? (
               <AutoExpandTextarea
                 ref={textareaRef}
@@ -279,7 +312,7 @@ export default function Block({
 
         {/* vertical-top: text section on bottom */}
         {isVertTop && (
-          <div className={`bg-white px-4 py-3 ${textSectionRounded}`}>
+          <div className={`bg-white px-4 py-4 ${textSectionRounded}`}>
             {menuOpen ? (
               <AutoExpandTextarea
                 ref={textareaRef}
@@ -297,7 +330,7 @@ export default function Block({
         )}
 
         {!menuOpen && (
-          <button className={`cursor-pointer ${dotsClass}`} onClick={() => setMenuOpen(!menuOpen)}>
+          <button className={`cursor-pointer py-3 ${dotsClass}`} onClick={(e) => { e.stopPropagation(); setMenuOpen(true); }}>
             <ThreeDots white={isVertTop} />
           </button>
         )}
