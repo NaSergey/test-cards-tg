@@ -7,6 +7,39 @@ import Block from "./Block";
 import RevealWhenLoaded from "./RevealWhenLoaded";
 import LayoutSelector, { LayoutType } from "./LayoutSelector";
 
+const presetBlocks2 = [
+  {
+    id: 6,
+    text: "Mountains cover about 27% of Earth's land surface.",
+    count: 5,
+    imageSrc: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200&q=80",
+  },
+  {
+    id: 7,
+    text: "The Amazon rainforest produces 20% of the world's oxygen.",
+    count: 88,
+    imageSrc: undefined,
+  },
+  {
+    id: 8,
+    text: "Every year, approximately 500,000 earthquakes occur worldwide.",
+    count: 500,
+    imageSrc: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=80",
+  },
+  {
+    id: 9,
+    text: "Light travels at 299,792 kilometres per second.",
+    count: 12,
+    imageSrc: undefined,
+  },
+  {
+    id: 10,
+    text: "There are more trees on Earth than stars in the Milky Way.",
+    count: 42,
+    imageSrc: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=200&q=80",
+  },
+];
+
 const presetBlocks = [
   {
     id: 1,
@@ -93,13 +126,21 @@ export default function BlockPlayground() {
 
   const { count, active: countActive } = parseCountInput(countInput);
 
-  // Получить все блоки для навигации
-  const allBlocks = useMemo(
+  // Колонки для навигации
+  const columns = useMemo(
     () => [
-      ...presetBlocks.map((b) => ({ id: `preset-${b.id}`, isPreset: true })),
-      ...newBlocks.map((b) => ({ id: b.id, isPreset: false })),
+      [
+        ...presetBlocks.map((b) => `preset-${b.id}`),
+        ...newBlocks.map((b) => b.id),
+      ],
+      presetBlocks2.map((b) => `preset2-${b.id}`),
     ],
     [newBlocks]
+  );
+
+  const allBlocks = useMemo(
+    () => columns.flat().map((id) => ({ id })),
+    [columns]
   );
 
   // Обработка клавиатуры
@@ -108,17 +149,25 @@ export default function BlockPlayground() {
       const active = document.activeElement;
       const isInputFocused = active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement;
       if (!editingBlockId && !isInputFocused) {
-        if (e.key === "ArrowUp") {
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
           e.preventDefault();
-          const currentIndex = allBlocks.findIndex((b) => b.id === focusedBlockId);
-          if (currentIndex > 0) {
-            setFocusedBlockId(allBlocks[currentIndex - 1].id);
+          const colIdx = columns.findIndex((col) => col.includes(focusedBlockId as string));
+          if (colIdx === -1) return;
+          const col = columns[colIdx];
+          const rowIdx = col.indexOf(focusedBlockId as string);
+          const nextRow = e.key === "ArrowUp" ? rowIdx - 1 : rowIdx + 1;
+          if (nextRow >= 0 && nextRow < col.length) {
+            setFocusedBlockId(col[nextRow]);
           }
-        } else if (e.key === "ArrowDown") {
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
           e.preventDefault();
-          const currentIndex = allBlocks.findIndex((b) => b.id === focusedBlockId);
-          if (currentIndex < allBlocks.length - 1) {
-            setFocusedBlockId(allBlocks[currentIndex + 1].id);
+          const colIdx = columns.findIndex((col) => col.includes(focusedBlockId as string));
+          if (colIdx === -1) return;
+          const rowIdx = columns[colIdx].indexOf(focusedBlockId as string);
+          const nextCol = e.key === "ArrowLeft" ? colIdx - 1 : colIdx + 1;
+          if (nextCol >= 0 && nextCol < columns.length) {
+            const targetRow = Math.min(rowIdx, columns[nextCol].length - 1);
+            setFocusedBlockId(columns[nextCol][targetRow]);
           }
         } else if (e.key === " ") {
           e.preventDefault();
@@ -139,7 +188,7 @@ export default function BlockPlayground() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [focusedBlockId, allBlocks, editingBlockId]);
+  }, [focusedBlockId, allBlocks, editingBlockId, columns]);
 
 
   // Создание нового блока
@@ -163,11 +212,11 @@ export default function BlockPlayground() {
   return (
     <div className="min-h-screen bg-[#FCFCFC] flex flex-col overflow-x-auto">
       {/* Header */}
-      <div className="flex justify-end px-4 sm:px-8 py-4 sm:py-6 border-b border-gray-100">
+      <div className="flex justify-end px-4 py-4 border-b border-gray-100">
         <button
           onClick={handleCreateBlock}
           disabled={!inputText.trim()}
-          className="px-4 py-3 rounded-2xl bg-[#068DFB] text-white font-medium text-[15px] shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] hover:bg-[#0573D2] disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+          className="px-3 py-2 rounded-2xl bg-[#068DFB] text-white font-medium text-[15px] shadow-[0px_1px_8px_0px_rgba(0,0,0,0.10)] hover:bg-[#0573D2] disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
         >
           Добавить
         </button>
@@ -267,6 +316,37 @@ export default function BlockPlayground() {
           ))}
         </div>
       </div>
+      {/* 3rd column */}
+      <div className="flex flex-col gap-3 ml-4">
+        {presetBlocks2.map((block) => {
+          const blockId = `preset2-${block.id}`;
+          return (
+            <Block
+              key={blockId}
+              id={block.id}
+              initialLayout={getBlockLayout(block.id, block.imageSrc ? "horizontal" : "text")}
+              text={getBlockText(block.id, block.text)}
+              count={block.count}
+              imageSrc={block.imageSrc}
+              isFocused={focusedBlockId === blockId}
+              isSelected={selectedBlockIds.has(blockId)}
+              onFocus={() => { if (!editingBlockId) setFocusedBlockId(blockId); }}
+              onSave={(newText, newLayout) => handleBlockSave(block.id, newText, newLayout)}
+              onEditChange={(editing) => setEditingBlockId(editing ? blockId : null)}
+              onSelectToggle={() => {
+                if (editingBlockId) return;
+                setSelectedBlockIds((prev) => {
+                  const newSet = new Set(prev);
+                  if (newSet.has(blockId)) newSet.delete(blockId);
+                  else newSet.add(blockId);
+                  return newSet;
+                });
+              }}
+            />
+          );
+        })}
+      </div>
+
       </RevealWhenLoaded>
       </div>
     </div>

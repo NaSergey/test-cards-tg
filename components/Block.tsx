@@ -85,7 +85,7 @@ export default function Block({
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const borderClass = (menuOpen || isSelected || (isFocused && !menuOpen)) ? "border-[#229CFD]" : "border-gray-100";
+  const borderClass = (menuOpen || (isFocused && !menuOpen)) ? "border-[#229CFD]" : "border-gray-100";
 
   const shadowClass = !menuOpen && isSelected
     ? "shadow-[0px_1px_8px_0px_#149DFF36]"
@@ -224,7 +224,7 @@ export default function Block({
 
         {/* vertical-bottom: text section on top */}
         {isVertBottom && (
-          <div className={`bg-white px-4 py-4 ${textSectionRounded}`}>
+          <div className={`px-4 py-4 ${textSectionRounded}`} style={{ backgroundColor: bgColor }}>
             {menuOpen ? (
               <AutoExpandTextarea
                 ref={textareaRef}
@@ -312,7 +312,7 @@ export default function Block({
 
         {/* vertical-top: text section on bottom */}
         {isVertTop && (
-          <div className={`bg-white px-4 py-4 ${textSectionRounded}`}>
+          <div className={`px-4 py-4 ${textSectionRounded}`} style={{ backgroundColor: bgColor }}>
             {menuOpen ? (
               <AutoExpandTextarea
                 ref={textareaRef}
