@@ -60,7 +60,7 @@ export function useBadgeOverlap(_text: string, enabled = true, layoutKey?: strin
       clearTimeout(timerId);
       observer.disconnect();
     };
-  }, [enabled, layoutKey]);
+  }, [_text, enabled, layoutKey]);
 
   return { textRef, endRef, badgeRef, extraBottomPad, isMultiLine, isManyLines };
 }
