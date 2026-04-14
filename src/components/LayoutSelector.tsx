@@ -1,5 +1,6 @@
 "use client";
 
+import { ReactNode } from "react";
 import LayoutText from "./icon/LayoutText";
 import LayoutHorizontal from "./icon/LayoutHorizontal";
 import LayoutVerticalTop from "./icon/LayoutVerticalTop";
@@ -7,7 +8,7 @@ import LayoutVerticalBottom from "./icon/LayoutVerticalBottom";
 
 export type LayoutType = "text" | "horizontal" | "vertical-top" | "vertical-bottom";
 
-const layouts: { type: LayoutType; icon: React.ReactNode; label: string }[] = [
+const layouts: { type: LayoutType; icon: ReactNode; label: string }[] = [
   { type: "text", icon: <LayoutText />, label: "Текст" },
   { type: "vertical-top", icon: <LayoutVerticalTop />, label: "Картинка сверху" },
   { type: "vertical-bottom", icon: <LayoutVerticalBottom />, label: "Картинка снизу" },

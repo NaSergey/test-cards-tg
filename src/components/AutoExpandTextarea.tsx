@@ -6,7 +6,6 @@ interface AutoExpandTextareaProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
-  style?: React.CSSProperties;
   placeholder?: string;
 }
 
@@ -15,7 +14,7 @@ const AutoExpandTextarea = forwardRef<
   AutoExpandTextareaProps
 >(
   (
-    { value, onChange, className = "", style = {}, placeholder = "" },
+    { value, onChange, className = "", placeholder = "" },
     ref
   ) => {
     const internalRef = useRef<HTMLTextAreaElement>(null);
@@ -37,7 +36,7 @@ const AutoExpandTextarea = forwardRef<
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={1}
-        className={`resize-none block  focus:outline-none overflow-hidden ${className}`}
+        className={`resize-none block focus:outline-none overflow-hidden ${className}`}
       />
     );
   }
