@@ -230,10 +230,10 @@ export default function Block({
                 ref={textareaRef}
                 value={editingText}
                 onChange={handleTextChange}
-                className="text-[15px] leading-[1.4] text-gray-800 w-full border-0"
+                className="text-sm  leading-[1.4] text-gray-800 w-full border-0"
               />
             ) : (
-              <p ref={textRef} className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
+              <p ref={textRef} className="text-sm  leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
                 style={{ paddingBottom: extraBottomPad }}>
                 {text}<span ref={endRef} />
               </p>
@@ -280,11 +280,11 @@ export default function Block({
               ref={textareaRef}
               value={editingText}
               onChange={handleTextChange}
-              className="text-sm leading-[1.4] text-gray-800 w-full border-0"
+              className="text-sm  leading-[1.4] text-gray-800 w-full border-0"
               style={{ paddingBottom: extraBottomPad }}
             />
           ) : (
-            <p ref={textRef} className="text-sm leading-[1.4] text-gray-800 wrap-break-word"
+            <p ref={textRef} className="text-sm  leading-[1.4] text-gray-800 wrap-break-word"
               style={{ paddingBottom: extraBottomPad }}>
               {text}<span ref={endRef} />
             </p>
@@ -299,10 +299,10 @@ export default function Block({
                 ref={textareaRef}
                 value={editingText}
                 onChange={handleTextChange}
-                className="text-[15px] leading-[1.4] text-gray-800 w-full border-0"
+                className="text-sm  leading-[1.4] text-gray-800 w-full border-0"
               />
             ) : (
-              <p ref={textRef} className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
+              <p ref={textRef} className="text-sm  leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
                 style={{ paddingBottom: extraBottomPad }}>
                 {text}<span ref={endRef} />
               </p>
@@ -318,10 +318,10 @@ export default function Block({
                 ref={textareaRef}
                 value={editingText}
                 onChange={handleTextChange}
-                className="text-[15px] leading-[1.4] text-gray-800 w-full border-0"
+                className="text-sm  leading-[1.4] text-gray-800 w-full border-0"
               />
             ) : (
-              <p ref={textRef} className="text-[15px] leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
+              <p ref={textRef} className="text-sm  leading-[1.4] text-gray-800 wrap-break-word min-h-5.25"
                 style={{ paddingBottom: extraBottomPad }}>
                 {text}<span ref={endRef} />
               </p>
