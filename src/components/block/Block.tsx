@@ -2,15 +2,15 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import ThreeDots from "./icon/ThreeDots";
-import Badge from "./Badge";
-import { useBadgeOverlap } from "../hooks/useBadgeOverlap";
-import { LayoutType } from "./LayoutSelector";
-import { LAYOUT_CONFIG, getWrapperClass } from "./block/layoutConfig";
-import BlockMenuBar from "./block/BlockMenuBar";
-import BlockImage from "./block/BlockImage";
-import TextContent from "./block/TextContent";
-import { BlockProps } from "./block/types";
+import ThreeDots from "../icon/ThreeDots";
+import Badge from "../Badge";
+import { useBadgeOverlap } from "../../hooks/useBadgeOverlap";
+import { LayoutType } from "../LayoutSelector";
+import { LAYOUT_CONFIG, getWrapperClass } from "./layoutConfig";
+import BlockMenuBar from "./BlockMenuBar";
+import BlockImage from "./BlockImage";
+import TextContent from "./TextContent";
+import { BlockProps } from "./types";
 
 export default function Block({
   text,

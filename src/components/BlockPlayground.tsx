@@ -5,7 +5,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useBlockSelection } from "@/hooks/useBlockSelection";
 import { useBlocksData } from "@/hooks/useBlocksData";
 import { useKeyboardNav } from "@/hooks/useKeyboardNav";
-import Block from "./Block";
+import Block from "./block/Block";
 import RevealWhenLoaded from "./RevealWhenLoaded";
 import PreviewPanel from "./PreviewPanel";
 import { LayoutType } from "./LayoutSelector";

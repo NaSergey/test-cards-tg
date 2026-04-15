@@ -1,6 +1,6 @@
 "use client";
 
-import Block from "./Block";
+import Block from "./block/Block";
 import { LayoutType } from "./LayoutSelector";
 
 const PREVIEW_IMAGE = "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80";
