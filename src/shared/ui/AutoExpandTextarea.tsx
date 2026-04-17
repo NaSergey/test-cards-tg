@@ -9,14 +9,8 @@ interface AutoExpandTextareaProps {
   placeholder?: string;
 }
 
-const AutoExpandTextarea = forwardRef<
-  HTMLTextAreaElement,
-  AutoExpandTextareaProps
->(
-  (
-    { value, onChange, className = "", placeholder = "" },
-    ref
-  ) => {
+const AutoExpandTextarea = forwardRef<HTMLTextAreaElement, AutoExpandTextareaProps>(
+  ({ value, onChange, className = "", placeholder = "" }, ref) => {
     const internalRef = useRef<HTMLTextAreaElement>(null);
     const textareaRef = ref || internalRef;
 

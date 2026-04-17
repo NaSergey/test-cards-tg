@@ -1,4 +1,4 @@
-import { LayoutType } from "../LayoutSelector";
+export type LayoutType = "text" | "horizontal" | "vertical-top" | "vertical-bottom";
 
 export interface BlockProps {
   text: string;
@@ -24,7 +24,6 @@ export interface TextContentProps {
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   onChange: (text: string) => void;
   extraBottomPad: number;
-  /** Adds min-h-5.25 to the paragraph (needed for layouts with images) */
   minH?: boolean;
 }
 

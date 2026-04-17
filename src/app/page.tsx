@@ -1,5 +1,5 @@
-import BlockPlayground from "@/components/BlockPlayground";
+import PlaygroundPage from "@/app/(main)/playground/PlaygroundPage";
 
 export default function Home() {
-  return <BlockPlayground />;
+  return <PlaygroundPage />;
 }

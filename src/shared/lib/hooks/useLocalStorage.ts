@@ -5,9 +5,7 @@ export function useLocalStorage<T>(
   initialValue: T
 ): [T, (value: T) => void] {
   const [storedValue, setStoredValue] = useState<T>(initialValue);
-  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Инициализация из localStorage (только на клиенте)
   useEffect(() => {
     try {
       const item = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
@@ -17,10 +15,8 @@ export function useLocalStorage<T>(
     } catch (error) {
       console.error(`Error reading from localStorage key "${key}":`, error);
     }
-    setIsLoaded(true);
   }, [key]);
 
-  // Сохранение в localStorage при изменении
   const setValue = (value: T) => {
     try {
       setStoredValue(value);

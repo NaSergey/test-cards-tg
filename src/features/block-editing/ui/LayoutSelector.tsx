@@ -1,12 +1,11 @@
 "use client";
 
 import { ReactNode } from "react";
-import LayoutText from "./icon/LayoutText";
-import LayoutHorizontal from "./icon/LayoutHorizontal";
-import LayoutVerticalTop from "./icon/LayoutVerticalTop";
-import LayoutVerticalBottom from "./icon/LayoutVerticalBottom";
-
-export type LayoutType = "text" | "horizontal" | "vertical-top" | "vertical-bottom";
+import LayoutText from "@/shared/ui/icons/LayoutText";
+import LayoutHorizontal from "@/shared/ui/icons/LayoutHorizontal";
+import LayoutVerticalTop from "@/shared/ui/icons/LayoutVerticalTop";
+import LayoutVerticalBottom from "@/shared/ui/icons/LayoutVerticalBottom";
+import { LayoutType } from "@/entities/block/model/types";
 
 const layouts: { type: LayoutType; icon: ReactNode; label: string }[] = [
   { type: "text", icon: <LayoutText />, label: "Текст" },

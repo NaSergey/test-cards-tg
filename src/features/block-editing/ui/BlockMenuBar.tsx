@@ -2,14 +2,14 @@
 
 import { ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import CloseIcon from "../icon/CloseIcon";
-import ArrowUp from "../icon/ArrowUp";
-import LayoutText from "../icon/LayoutText";
-import LayoutHorizontal from "../icon/LayoutHorizontal";
-import LayoutVerticalTop from "../icon/LayoutVerticalTop";
-import LayoutVerticalBottom from "../icon/LayoutVerticalBottom";
-import LayoutSelector, { LayoutType } from "../LayoutSelector";
-import { BlockMenuBarProps } from "./types";
+import CloseIcon from "@/shared/ui/icons/CloseIcon";
+import ArrowUp from "@/shared/ui/icons/ArrowUp";
+import LayoutText from "@/shared/ui/icons/LayoutText";
+import LayoutHorizontal from "@/shared/ui/icons/LayoutHorizontal";
+import LayoutVerticalTop from "@/shared/ui/icons/LayoutVerticalTop";
+import LayoutVerticalBottom from "@/shared/ui/icons/LayoutVerticalBottom";
+import LayoutSelector from "./LayoutSelector";
+import { LayoutType, BlockMenuBarProps } from "@/entities/block/model/types";
 
 const LAYOUT_ICONS: Record<LayoutType, ReactNode> = {
   text: <LayoutText />,
@@ -31,7 +31,6 @@ export default function BlockMenuBar({
 }: BlockMenuBarProps) {
   return (
     <>
-      {/* Layout selector popup — floats above the block */}
       <AnimatePresence mode="wait">
         {menuOpen && layoutSelectorOpen && (
           <motion.div
@@ -46,7 +45,6 @@ export default function BlockMenuBar({
         )}
       </AnimatePresence>
 
-      {/* Sliding menu bar — appears behind the block */}
       <div className="absolute w-full z-0 pointer-events-none">
         <div className="pointer-events-auto">
           <AnimatePresence mode="wait">

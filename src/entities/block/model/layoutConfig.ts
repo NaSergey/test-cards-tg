@@ -1,4 +1,4 @@
-import { LayoutType } from "../LayoutSelector";
+import { LayoutType } from "./types";
 
 interface LayoutConfig {
   dotsClass: string;

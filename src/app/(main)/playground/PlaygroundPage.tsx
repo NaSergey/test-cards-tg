@@ -1,18 +1,17 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { useBlockSelection } from "@/hooks/useBlockSelection";
-import { useBlocksData } from "@/hooks/useBlocksData";
-import { useKeyboardNav } from "@/hooks/useKeyboardNav";
-import Block from "./block/Block";
-import RevealWhenLoaded from "./RevealWhenLoaded";
-import PreviewPanel from "./PreviewPanel";
-import { LayoutType } from "./LayoutSelector";
-import { presetBlocks, presetBlocks2 } from "./block/presets";
-import { parseCountInput } from "@/utils/parseCountInput";
+import { useState, useMemo, useCallback } from "react";
+import { useLocalStorage } from "@/shared/lib/hooks/useLocalStorage";
+import { useBlockSelection } from "@/shared/lib/hooks/useBlockSelection";
+import { useKeyboardNav } from "@/shared/lib/hooks/useKeyboardNav";
+import { parseCountInput } from "@/shared/lib/utilities/parseCountInput";
+import RevealWhenLoaded from "@/shared/ui/RevealWhenLoaded";
+import { Block, useBlocksData } from "@/features/block-editing";
+import PreviewPanel from "@/app/(main)/playground/preview-panel/PreviewPanel";
+import { LayoutType } from "@/entities/block/model/types";
+import { presetBlocks, presetBlocks2 } from "@/entities/block/model/presets";
 
-export default function BlockPlayground() {
+export default function PlaygroundPage() {
   const [inputText, setInputText] = useLocalStorage<string>("preview-text", "Hello world!");
   const [countInput, setCountInput] = useState("42");
   const [layout, setLayout] = useLocalStorage<LayoutType>("preview-layout", "text");
@@ -43,13 +42,13 @@ export default function BlockPlayground() {
     setLayout("text");
   };
 
-  const makeHandlers = (blockId: string) => ({
+  const makeHandlers = useCallback((blockId: string) => ({
     isFocused: focusedBlockId === blockId,
     isSelected: selectedBlockIds.has(blockId),
     onFocus: () => { if (!editingBlockId) setFocusedBlockId(blockId); },
     onSelectToggle: () => { if (!editingBlockId) toggleSelection(blockId); },
     onEditChange: (editing: boolean) => setEditingBlockId(editing ? blockId : null),
-  });
+  }), [focusedBlockId, selectedBlockIds, editingBlockId, setFocusedBlockId, toggleSelection]);
 
   return (
     <div className="min-h-screen bg-[#FCFCFC] flex flex-col overflow-x-auto">

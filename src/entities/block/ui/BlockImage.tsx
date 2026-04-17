@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import LogoImages from "../icon/LogoImages";
+import LogoImages from "@/shared/ui/icons/LogoImages";
 
 interface HorizontalProps {
   variant: "horizontal";

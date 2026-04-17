@@ -1,7 +1,7 @@
 "use client";
 
-import AutoExpandTextarea from "../AutoExpandTextarea";
-import { TextContentProps } from "./types";
+import AutoExpandTextarea from "@/shared/ui/AutoExpandTextarea";
+import { TextContentProps } from "../model/types";
 
 export default function TextContent({
   menuOpen,

@@ -29,7 +29,6 @@ export function useBadgeOverlap(_text: string, enabled = true, layoutKey?: strin
       const lineHeight = parseFloat(style.lineHeight);
       const paddingBottom = parseFloat(style.paddingBottom) || 0;
 
-      // Защита от NaN
       if (isNaN(lineHeight) || lineHeight <= 0) {
         setIsMultiLine(false);
         setIsManyLines(false);
@@ -51,7 +50,6 @@ export function useBadgeOverlap(_text: string, enabled = true, layoutKey?: strin
 
     measure();
 
-    // Debounce для ResizeObserver - предотвращает частые обновления
     const observer = new ResizeObserver(() => {
       clearTimeout(timerId);
       timerId = setTimeout(measure, 100);

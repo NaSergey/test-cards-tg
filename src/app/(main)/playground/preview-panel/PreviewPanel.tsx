@@ -1,7 +1,7 @@
 "use client";
 
-import Block from "./block/Block";
-import { LayoutType } from "./LayoutSelector";
+import { Block } from "@/features/block-editing";
+import { LayoutType } from "@/entities/block/model/types";
 
 const PREVIEW_IMAGE = "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80";
 

@@ -1,5 +1,5 @@
-import { useLocalStorage } from "./useLocalStorage";
-import { LayoutType } from "@/components/LayoutSelector";
+import { useLocalStorage } from "@/shared/lib/hooks/useLocalStorage";
+import { LayoutType } from "@/entities/block/model/types";
 
 type BlockData = { text: string; layout?: LayoutType };
 

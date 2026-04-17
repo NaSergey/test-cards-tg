@@ -9,7 +9,6 @@ interface UseKeyboardNavParams {
 export function useKeyboardNav({ columns, editingBlockId, toggleSelection }: UseKeyboardNavParams) {
   const [focusedBlockId, setFocusedBlockId] = useState<string | number | null>("preset-1");
 
-  // Flat list only needed for dep tracking — not used directly inside effect
   const allBlockIds = useMemo(() => columns.flat(), [columns]);
 
   useEffect(() => {
